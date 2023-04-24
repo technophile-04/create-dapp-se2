@@ -4,7 +4,7 @@ import type { Options, RawOptions } from "../types";
 
 // default values for unspecified args
 const defaultOptions: Omit<Options, "project"> = {
-  git: false,
+  git: true,
   install: true,
   template: "se-2-hardhat",
 };
@@ -28,7 +28,7 @@ export async function promptForMissingOptions(
     questions.push({
       type: "input",
       name: "project",
-      message: "Please type project's name (cannot be empty)",
+      message: "Please type project's name (cannot be empty) : ",
       validate: (value: string) => value.length > 0,
     });
   }
@@ -37,7 +37,7 @@ export async function promptForMissingOptions(
     questions.push({
       type: "list",
       name: "template",
-      message: "Please choose which project template to use",
+      message: "Please choose which project template to use : ",
       choices: [
         { name: "SE-2 with Hardhat", value: "se-2-hardhat" },
         { name: "SE-2 with only frontend", value: "se-2-frontend" },
