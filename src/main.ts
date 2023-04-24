@@ -11,6 +11,8 @@ import {
 import type { Options } from "./types";
 
 export async function createProject(options: Options) {
+  console.log(`\n`);
+
   const currentFileUrl = import.meta.url;
 
   const templateDirectory = path.resolve(
@@ -50,8 +52,6 @@ export async function createProject(options: Options) {
 
   try {
     await tasks.run();
-
-    console.log("%s Project ready", chalk.green.bold("DONE"));
   } catch (error) {
     console.log("%s Error occurred", chalk.red.bold("ERROR"));
   }
