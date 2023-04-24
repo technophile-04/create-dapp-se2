@@ -6,6 +6,28 @@ Scaffold a new Scaffold-ETH 2 project.
 yarn create dapp-se2
 ```
 
+You can also pass [flags](https://github.com/technophile-04/create-dapp-se2/blob/ab4713dd1a5eca90f2b7841ce4c2aa78a69443f2/src/utils/parse-arguments-into-options.ts#L10) to skip prompts.
+
+```bash
+yarn create dapp-se2 my-se2-dapp --template se-2-hardhat
+
+# or
+
+yarn create dapp-se2 my-se2-dapp --yes
+```
+
+# Understanding the structure :
+
+`src/cli.ts` is the entry point for the cli.
+
+`src/main.ts` defines the task using [listr](https://www.npmjs.com/package/listr) and executes them.
+
+`src/tasks` holds each task logic for example one of the task in `src/main.ts` is "Initialize git repo" and the logic for it is present at `src/tasks/init-git-repo`
+
+`src/utils` holds utility / helpers function like parsing cli args, checking for correct template name, showing welcome and outro messages etc.
+
+`src/types.ts` holds all the type
+
 # Trying out locally :
 
 Clone and get into working directory :
