@@ -39,7 +39,13 @@ git clone https://github.com/carletex/create-dapp-example
 cd create-dapp-example
 ```
 
-Linking package locally and running watch mode:
+**Option 1.** Build & npx
+
+```bash
+yarn build && npx .
+```
+
+**Option 2.** Linking package locally and running watch mode:
 
 ```bash
 # Make sure you are in create-dapp-se2 directory
