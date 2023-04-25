@@ -1,19 +1,21 @@
-# 🏗️ create-dapp-se2 :
+# 🏗️ create-dapp-example
 
-Scaffold a new Scaffold-ETH 2 project.
+Testing the best way to have a create-app cli tool.
 
 ```bash
-yarn create dapp-se2
+yarn create dapp-example
+# or
+npx create-dapp-example
 ```
 
 You can also pass [flags](https://github.com/technophile-04/create-dapp-se2/blob/ab4713dd1a5eca90f2b7841ce4c2aa78a69443f2/src/utils/parse-arguments-into-options.ts#L10) to skip prompts.
 
 ```bash
-yarn create dapp-se2 my-se2-dapp --template se-2-hardhat
+yarn create dapp-example my-example-dapp --template se-2-hardhat
 
 # or
 
-yarn create dapp-se2 my-se2-dapp --yes
+yarn create dapp-example my-example-dapp --yes
 ```
 
 # Understanding the structure :
@@ -33,8 +35,8 @@ yarn create dapp-se2 my-se2-dapp --yes
 Clone and get into working directory :
 
 ```bash
-git clone https://github.com/technophile-04/create-dapp-se2.git
-cd create-dapp-se2
+git clone https://github.com/carletex/create-dapp-example
+cd create-dapp-example
 ```
 
 Linking package locally and running watch mode:

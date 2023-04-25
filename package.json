@@ -1,13 +1,10 @@
 {
-  "name": "create-dapp-se2",
+  "name": "create-dapp-example",
   "version": "0.0.3",
   "description": "Create SE-2 dapp with ease",
   "main": "dist/cli.js",
   "type": "module",
-  "bin": {
-    "@shiv/create-dapp-se2": "bin/create-dapp-se2.js",
-    "create-dapp-se2": "bin/create-dapp-se2.js"
-  },
+  "bin": "bin/create-dapp-se2.js",
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "dev": "rollup -c rollup.config.js --watch",
@@ -39,5 +36,6 @@
     "listr": "0.14.3",
     "ncp": "2.0.0",
     "pkg-install": "1.0.0"
-  }
+  },
+  "packageManager": "yarn@3.5.0"
 }
