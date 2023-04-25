@@ -1,14 +1,9 @@
+import { copyTemplateFiles, createProjectDirectory } from "./tasks";
+import type { Options } from "./types";
 import chalk from "chalk";
 import Listr from "listr";
 import path from "path";
 import { fileURLToPath } from "url";
-import {
-  copyTemplateFiles,
-  createProjectDirectory,
-  initGitRepo,
-  installPackages,
-} from "./tasks";
-import type { Options } from "./types";
 
 export async function createProject(options: Options) {
   console.log(`\n`);
@@ -31,7 +26,15 @@ export async function createProject(options: Options) {
       title: `🚀 Creating a new Scaffold-ETH 2 app in ${chalk.green.bold(
         options.project
       )}`,
-      task: () => copyTemplateFiles(options, templateDirectory, targetDirectory),
+      task: () =>
+        copyTemplateFiles(options, templateDirectory, targetDirectory),
+    },
+    {
+      title: `⚙️ Adding the following extensions ${JSON.stringify(
+        options.extensions
+      )}`,
+      task: () =>
+        copyTemplateFiles(options, templateDirectory, targetDirectory),
     },
   ]);
 

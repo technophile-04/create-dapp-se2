@@ -1,9 +1,8 @@
+import type { Options, RawOptions } from "../types";
 import inquirer from "inquirer";
 
-import type { Options, RawOptions } from "../types";
-
 // default values for unspecified args
-const defaultOptions: Options = {
+const defaultOptions: Omit<Options, "extensions"> = {
   project: "my-dapp-example",
   smartContractFramework: "hardhat",
 };
@@ -37,10 +36,23 @@ export async function promptForMissingOptions(
     });
   }
 
+  questions.push({
+    type: "checkbox",
+    name: "extensions",
+    message: "Choose the extensions that you want to add: ",
+    choices: [
+      { name: "The graph", value: "graph" },
+      { name: "Another ext", value: "another" },
+    ],
+    default: defaultOptions.smartContractFramework,
+  });
+
   const answers = await inquirer.prompt(questions);
 
   return {
-    smartContractFramework: options.smartContractFramework || answers.smartContractFramework,
+    smartContractFramework:
+      options.smartContractFramework || answers.smartContractFramework,
     project: options.project || answers.project,
+    extensions: answers.extensions,
   };
 }
