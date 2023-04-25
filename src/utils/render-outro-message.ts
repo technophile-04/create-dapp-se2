@@ -1,32 +1,34 @@
 import chalk from "chalk";
 import type { Options } from "../types";
 export function renderOutroMessage(options: Options): void {
-  const { template } = options;
+  const { smartContractFramework } = options;
   let message = `
   \n
   ${chalk.bold.green("Congratulations!")} Your project has been scaffolded! 🎉
   \n
   ${chalk.bold("Next steps:")}
+    \n
+  ${chalk.dim("cd")} ${options.project}
   `;
 
-  switch (template) {
-    case "se-2-hardhat":
+
+
+  switch (smartContractFramework) {
+    case "hardhat":
+    case "foundry":
       message += `
-      ${chalk.bold("1. Start the Hardhat development node")}
-      ${chalk.dim("cd")} ${options.project}
+      ${chalk.bold(`1. Start the ${smartContractFramework} development node`)}
       ${chalk.dim("yarn")} chain
       \n
       ${chalk.bold("2. In a new terminal window, deploy your contracts")}
-      ${chalk.dim("cd")} ${options.project}
       ${chalk.dim("yarn")} deploy
       \n
       ${chalk.bold("3. In a new terminal window, start the frontend")}
-      ${chalk.dim("cd")} ${options.project}
       ${chalk.dim("yarn")} start
       `;
 
       break;
-    case "se-2-frontend":
+    case "none":
       message += `
       ${chalk.bold("1. In a new terminal window, start the frontend")}
       ${chalk.dim("cd")} ${options.project}

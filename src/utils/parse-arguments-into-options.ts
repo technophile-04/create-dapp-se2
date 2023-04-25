@@ -1,36 +1,30 @@
 import arg from "arg";
 import chalk from "chalk";
 
-import { checkTemplateValidity } from "./check-template-validity";
+import { checkValidSmartContractFramework } from "./check-valid-smart-contract-framework";
 
 import type { Args, RawOptions } from "../types";
-import { templates } from "../types";
+import { smartContractFrameworks } from "../types";
 
 export function parseArgumentsIntoOptions(rawArgs: Args): RawOptions {
   const args = arg(
     {
-      "--git": Boolean,
-      "--yes": Boolean,
-      "--install": Boolean,
-      "--template": String,
-      "-g": "--git",
-      "-y": "--yes",
-      "-i": "--install",
-      "-t": "--template",
+      "--smartContractFramework": String,
+      "-scf": "--smartContractFramework",
     },
     {
       argv: rawArgs.slice(2),
     }
   );
 
-  const template = args["--template"]?.toLowerCase();
-  const isTemplateValid = checkTemplateValidity(template);
+  const smartContractFramework = args["--smartContractFramework"]?.toLowerCase();
+  const isTemplateValid = checkValidSmartContractFramework(smartContractFramework);
 
   if (!isTemplateValid) {
     console.log(
       `%s You passed incorrect template: ${
-        args["--template"]
-      }. List of supported templates: ${templates.join(", ")}`,
+        args["--smartContractFramework"]
+      }. List of supported smart contract frameworks: ${smartContractFrameworks.join(", ")}`,
       chalk.yellow.bold("WARNING")
     );
   }
@@ -38,10 +32,7 @@ export function parseArgumentsIntoOptions(rawArgs: Args): RawOptions {
   const project = args._[0]?.toLowerCase();
 
   return {
-    git: args["--git"] || false,
-    install: args["--install"] || false,
     project,
-    skipPrompts: args["--yes"] || false,
-    template: isTemplateValid ? template : undefined,
+    smartContractFramework: isTemplateValid ? smartContractFramework : undefined,
   };
 }

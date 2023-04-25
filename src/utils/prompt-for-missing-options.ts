@@ -3,73 +3,44 @@ import inquirer from "inquirer";
 import type { Options, RawOptions } from "../types";
 
 // default values for unspecified args
-const defaultOptions: Omit<Options, "project"> = {
-  git: true,
-  install: true,
-  template: "se-2-hardhat",
-};
-
-// --yes flag is passed
-const skipOptions: Omit<Options, "template" | "project"> = {
-  git: true,
-  install: true,
+const defaultOptions: Options = {
+  project: "my-dapp-example",
+  smartContractFramework: "hardhat",
 };
 
 export async function promptForMissingOptions(
   options: RawOptions
 ): Promise<Options> {
-  if (options.skipPrompts) {
-    options = { ...options, ...skipOptions };
-  }
-
   const questions = [];
 
   if (!options.project) {
     questions.push({
       type: "input",
       name: "project",
-      message: "Please type project's name (cannot be empty) : ",
+      message: "Your project name:",
+      default: defaultOptions.project,
       validate: (value: string) => value.length > 0,
     });
   }
 
-  if (!options.template) {
+  if (!options.smartContractFramework) {
     questions.push({
       type: "list",
-      name: "template",
-      message: "Please choose which project template to use : ",
+      name: "smartContractFramework",
+      message: "Choose your smart contract dev framework: ",
       choices: [
-        { name: "SE-2 with Hardhat", value: "se-2-hardhat" },
-        { name: "SE-2 with only frontend", value: "se-2-frontend" },
+        { name: "Hardhat", value: "hardhat" },
+        { name: "Foundry", value: "foundry" },
+        { name: "None (only frontend)", value: "se-2-frontend" },
       ],
-      default: defaultOptions.template,
-    });
-  }
-
-  if (!options.git) {
-    questions.push({
-      type: "confirm",
-      name: "git",
-      message: "Initialize a git repository?",
-      default: defaultOptions.git,
-    });
-  }
-
-  if (!options.install) {
-    questions.push({
-      type: "confirm",
-      name: "install",
-      message: "Install packages?",
-      default: defaultOptions.install,
+      default: defaultOptions.smartContractFramework,
     });
   }
 
   const answers = await inquirer.prompt(questions);
 
   return {
-    git: options.git || answers.git,
-    install: options.install || answers.install,
-    template: options.template || answers.template,
+    smartContractFramework: options.smartContractFramework || answers.smartContractFramework,
     project: options.project || answers.project,
   };
 }
