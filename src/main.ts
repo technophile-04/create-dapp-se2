@@ -5,6 +5,7 @@ import Listr from "listr";
 import path from "path";
 import { fileURLToPath } from "url";
 import { installPackages } from "./tasks/install-packages";
+import { renderOutroMessage } from "./utils/render-outro-message";
 
 export async function createProject(options: Options) {
   console.log(`\n`);
@@ -50,7 +51,9 @@ export async function createProject(options: Options) {
 
   try {
     await tasks.run();
+    renderOutroMessage(options);
   } catch (error) {
     console.log("%s Error occurred", chalk.red.bold("ERROR"), error);
+    console.log("%s Exiting...", chalk.red.bold("Uh oh! 😕 Sorry about that!"));
   }
 }
