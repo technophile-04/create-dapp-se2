@@ -9,6 +9,8 @@ export function parseArgumentsIntoOptions(
 ): Omit<RawOptions, "extensions"> {
   const args = arg(
     {
+      "--install": Boolean,
+      "-i": "--install",
       "--smartContractFramework": String,
       "-scf": "--smartContractFramework",
     },
@@ -38,6 +40,7 @@ export function parseArgumentsIntoOptions(
 
   return {
     project,
+    install: args["--install"] || false,
     smartContractFramework: isTemplateValid
       ? smartContractFramework
       : undefined,

@@ -5,6 +5,7 @@ import inquirer from "inquirer";
 const defaultOptions: Omit<Options, "extensions"> = {
   project: "my-dapp-example",
   smartContractFramework: "hardhat",
+  install: true,
 };
 
 export async function promptForMissingOptions(
@@ -35,6 +36,15 @@ export async function promptForMissingOptions(
     });
   }
 
+  if (!options.install) {
+    questions.push({
+      type: "confirm",
+      name: "install",
+      message: "Install packages?",
+      default: defaultOptions.install,
+    });
+  }
+
   // questions.push({
   //   type: "checkbox",
   //   name: "extensions",
@@ -53,5 +63,6 @@ export async function promptForMissingOptions(
       options.smartContractFramework || answers.smartContractFramework,
     project: options.project || answers.project,
     // extensions: answers.extensions,
+    install: options.install || answers.install,
   };
 }

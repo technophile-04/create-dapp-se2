@@ -4,6 +4,7 @@ import chalk from "chalk";
 import Listr from "listr";
 import path from "path";
 import { fileURLToPath } from "url";
+import { installPackages } from "./tasks/install-packages";
 
 export async function createProject(options: Options) {
   console.log(`\n`);
@@ -36,6 +37,15 @@ export async function createProject(options: Options) {
     //   task: () =>
     //     copyTemplateFiles(options, templateDirectory, targetDirectory),
     // },
+    {
+      title: `📦 Installing dependencies with yarn, this could take a while`,
+      task: () => installPackages(targetDirectory),
+      skip: () => {
+        if (!options.install) {
+          return "Pass --install or -i to automatically install dependencies";
+        }
+      },
+    },
   ]);
 
   try {

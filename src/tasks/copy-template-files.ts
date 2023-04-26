@@ -13,7 +13,8 @@ import {
   handleBarsTemplateFiles,
   solidityFrameworksDir,
 } from "../utils/consts";
-import { constructYarnWorkspace } from "../utils/construct-yarn-workspaces";
+import { constructYarnWorkspaces } from "../utils/construct-yarn-workspaces";
+import { constructHandleBarsTargetFilePath } from "../utils/construct-handlebars-target-file-path";
 
 const copy = promisify(ncp);
 
@@ -24,9 +25,17 @@ const processAndCopyTemplateFiles = async (
   targetDir: string
 ) => {
   handleBarsTemplateFiles.forEach((templateFile) => {
+    // eg : templateFile = base/package.json.hbs
+
+    // base/package.json.hbs -> base/package.json
     const targetFile = templateFile.replace(".hbs", "");
     const templateFilePath = path.join(templateDir, templateFile);
-    const targetFilePath = path.join(targetDir, targetFile);
+
+    const targetFilePath = path.join(
+      targetDir,
+      // targetDir/base/package.json needs to be converted to targetDir/package.json
+      constructHandleBarsTargetFilePath(targetFile)
+    );
     const templateContent = fs.readFileSync(templateFilePath, "utf8");
     const template = Handlebars.compile<HandleBarTemplateOptions>(
       templateContent,
@@ -35,7 +44,7 @@ const processAndCopyTemplateFiles = async (
       }
     );
 
-    const yarnWorkspaces = constructYarnWorkspace(options);
+    const yarnWorkspaces = constructYarnWorkspaces(options);
     const result = template({ ...options, yarnWorkspaces });
 
     fs.writeFileSync(targetFilePath, result, "utf8");
@@ -79,7 +88,7 @@ export async function copyTemplateFiles(
   targetDir: string
 ) {
   // 1. Copy base template to target directory
-  await copy(path.join(templateDir, baseDir), path.join(targetDir, baseDir), {
+  await copy(path.join(templateDir, baseDir), path.join(targetDir), {
     clobber: false,
     filter: (fileName) => {
       // ignore template files
