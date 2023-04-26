@@ -30,7 +30,7 @@ export async function promptForMissingOptions(
       choices: [
         { name: "Hardhat", value: "hardhat" },
         { name: "Foundry", value: "foundry" },
-        { name: "None (only frontend)", value: "se-2-frontend" },
+        { name: "None (only frontend)", value: "none" },
       ],
       default: defaultOptions.smartContractFramework,
     });
