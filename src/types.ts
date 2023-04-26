@@ -1,4 +1,4 @@
-export const smartContractFrameworks = ["hardhat", "foundry", "none"] as const;
+export const smartContractFrameworks = ["hardhat", "none"] as const;
 export const availableExtensions = ["graph", "another"] as const;
 
 export type Args = string[];
@@ -12,6 +12,10 @@ export type RawOptions = {
 };
 
 export type Options = RawOptions & {
-  extensions: Extensions[];
+  // extensions: Extensions[];
   smartContractFramework: Template;
+};
+
+export type HandleBarTemplateOptions = Options & {
+  yarnWorkspaces: `packages/${string}`[];
 };

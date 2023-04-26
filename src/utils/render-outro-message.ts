@@ -11,11 +11,9 @@ export function renderOutroMessage(options: Options): void {
   ${chalk.dim("cd")} ${options.project}
   `;
 
-
-
   switch (smartContractFramework) {
     case "hardhat":
-    case "foundry":
+      // case "foundry":
       message += `
       ${chalk.bold(`1. Start the ${smartContractFramework} development node`)}
       ${chalk.dim("yarn")} chain

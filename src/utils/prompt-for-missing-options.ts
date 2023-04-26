@@ -29,23 +29,22 @@ export async function promptForMissingOptions(
       message: "Choose your smart contract dev framework: ",
       choices: [
         { name: "Hardhat", value: "hardhat" },
-        { name: "Foundry", value: "foundry" },
         { name: "None (only frontend)", value: "none" },
       ],
       default: defaultOptions.smartContractFramework,
     });
   }
 
-  questions.push({
-    type: "checkbox",
-    name: "extensions",
-    message: "Choose the extensions that you want to add: ",
-    choices: [
-      { name: "The graph", value: "graph" },
-      { name: "Another ext", value: "another" },
-    ],
-    default: defaultOptions.smartContractFramework,
-  });
+  // questions.push({
+  //   type: "checkbox",
+  //   name: "extensions",
+  //   message: "Choose the extensions that you want to add: ",
+  //   choices: [
+  //     { name: "The graph", value: "graph" },
+  //     { name: "Another ext", value: "another" },
+  //   ],
+  //   default: defaultOptions.smartContractFramework,
+  // });
 
   const answers = await inquirer.prompt(questions);
 
@@ -53,6 +52,6 @@ export async function promptForMissingOptions(
     smartContractFramework:
       options.smartContractFramework || answers.smartContractFramework,
     project: options.project || answers.project,
-    extensions: answers.extensions,
+    // extensions: answers.extensions,
   };
 }

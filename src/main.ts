@@ -29,13 +29,13 @@ export async function createProject(options: Options) {
       task: () =>
         copyTemplateFiles(options, templateDirectory, targetDirectory),
     },
-    {
-      title: `⚙️ Adding the following extensions ${JSON.stringify(
-        options.extensions
-      )}`,
-      task: () =>
-        copyTemplateFiles(options, templateDirectory, targetDirectory),
-    },
+    // {
+    //   title: `⚙️ Adding the following extensions ${JSON.stringify(
+    //     options.extensions
+    //   )}`,
+    //   task: () =>
+    //     copyTemplateFiles(options, templateDirectory, targetDirectory),
+    // },
   ]);
 
   try {
