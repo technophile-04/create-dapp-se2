@@ -34,6 +34,36 @@ const processAndCopyTemplateFiles = async (
   });
 };
 
+const copyFilesFromExtensions = async (
+  options: Options,
+  templateDir: string,
+  targetDir: string
+) => {
+  console.log("Copying files from extensions");
+  options.extensions.forEach((extension) => {
+    // Copy "package" folder from extension
+    const extensionDir = path.join(templateDir, extension);
+    const targetExtensionDir = path.join(targetDir, extension);
+    copy(extensionDir, targetExtensionDir, {
+      clobber: false,
+      filter: (fileName) => {
+        // ignore nextjs
+        return !fileName.includes("nextjs");
+      },
+    });
+    // Copy extension files/folder into NextJS folder
+    // Check if "extension/nextjs" folder exists
+    const extensionNextjsDir = path.join(extensionDir, "nextjs");
+    if (fs.existsSync(extensionNextjsDir)) {
+      // copy that folder into targetDir/nextjs
+      const targetExtensionNextjsDir = path.join(targetDir, "nextjs");
+      copy(extensionNextjsDir, targetExtensionNextjsDir, {
+        clobber: false,
+      });
+    }
+  });
+};
+
 export async function copyTemplateFiles(
   options: Options,
   templateDir: string,
@@ -58,6 +88,7 @@ export async function copyTemplateFiles(
   }
 
   // 3. Copy extensions folder/files
+  await copyFilesFromExtensions(options, templateDir, targetDir);
 
   // 4. Process template files, depending on enabled extensions
   await processAndCopyTemplateFiles(options, templateDir, targetDir);

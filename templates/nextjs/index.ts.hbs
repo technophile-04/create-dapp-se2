@@ -6,3 +6,8 @@ const testArray = ["test1", "test2", "test3"];
 // conditionaly render a string with handlebars
 const graph = "The graph is installed";
 {{/if}}
+
+{{#if enabledExtensions.another}}
+// conditionaly render a string with handlebars
+const another = "Another Extension is installed";
+{{/if}}

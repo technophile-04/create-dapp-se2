@@ -1,0 +1,1 @@
+Another extension installed!
