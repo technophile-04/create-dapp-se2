@@ -1,9 +1,10 @@
 export const smartContractFrameworks = ["hardhat", "none"] as const;
-export const availableExtensions = ["graph", "another"] as const;
+export const availableExtensions = ["graph"] as const;
 
 export type Args = string[];
 
 export type Template = (typeof smartContractFrameworks)[number];
+
 export type Extensions = (typeof availableExtensions)[number];
 
 export type RawOptions = {
@@ -13,10 +14,14 @@ export type RawOptions = {
 };
 
 export type Options = RawOptions & {
-  // extensions: Extensions[];
+  extensions: Extensions[];
   smartContractFramework: Template;
 };
 
 export type HandleBarTemplateOptions = Options & {
   yarnWorkspaces: `packages/${string}`[];
+  _appImports: string[];
+  _appOutsideComponentCode: string[];
+  _appProviderWrappers: string[];
+  _appProvidersClosingTags: string[];
 };

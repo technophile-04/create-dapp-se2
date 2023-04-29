@@ -45,16 +45,13 @@ export async function promptForMissingOptions(
     });
   }
 
-  // questions.push({
-  //   type: "checkbox",
-  //   name: "extensions",
-  //   message: "Choose the extensions that you want to add: ",
-  //   choices: [
-  //     { name: "The graph", value: "graph" },
-  //     { name: "Another ext", value: "another" },
-  //   ],
-  //   default: defaultOptions.smartContractFramework,
-  // });
+  questions.push({
+    type: "checkbox",
+    name: "extensions",
+    message: "Choose the extensions that you want to add: ",
+    choices: [{ name: "The graph", value: "graph" }],
+    default: defaultOptions.smartContractFramework,
+  });
 
   const answers = await inquirer.prompt(questions);
 
@@ -62,7 +59,7 @@ export async function promptForMissingOptions(
     smartContractFramework:
       options.smartContractFramework || answers.smartContractFramework,
     project: options.project || answers.project,
-    // extensions: answers.extensions,
+    extensions: answers.extensions,
     install: options.install || answers.install,
   };
 }

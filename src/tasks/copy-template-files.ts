@@ -1,3 +1,5 @@
+// @ts-expect-error We don't have types for this probably add .d.ts file
+import mergeJsonStr from "merge-packages";
 import {
   availableExtensions,
   HandleBarTemplateOptions,
@@ -15,6 +17,7 @@ import {
 } from "../utils/consts";
 import { constructYarnWorkspaces } from "../utils/construct-yarn-workspaces";
 import { constructHandleBarsTargetFilePath } from "../utils/construct-handlebars-target-file-path";
+import { CLIENT_RENEG_LIMIT } from "tls";
 
 const copy = promisify(ncp);
 
@@ -45,7 +48,15 @@ const processAndCopyTemplateFiles = async (
     );
 
     const yarnWorkspaces = constructYarnWorkspaces(options);
-    const result = template({ ...options, yarnWorkspaces });
+
+    const result = template({
+      ...options,
+      yarnWorkspaces,
+      _appImports: [],
+      _appOutsideComponentCode: [],
+      _appProviderWrappers: [],
+      _appProvidersClosingTags: [],
+    });
 
     fs.writeFileSync(targetFilePath, result, "utf8");
   });
@@ -57,7 +68,6 @@ const copyFilesFromExtensions = async (
   targetDir: string
 ) => {
   console.log("Copying files from extensions");
-  // @ts-expect-error TODO: fix this currently ignoring extensions Dir
   options.extensions.forEach((extension) => {
     // Copy "package" folder from extension
     const extensionDir = path.join(templateDir, extension);
@@ -88,7 +98,7 @@ export async function copyTemplateFiles(
   targetDir: string
 ) {
   // 1. Copy base template to target directory
-  await copy(path.join(templateDir, baseDir), path.join(targetDir), {
+  await copy(path.join(templateDir, baseDir), targetDir, {
     clobber: false,
     filter: (fileName) => {
       // ignore template files
@@ -102,6 +112,8 @@ export async function copyTemplateFiles(
       path.join(
         templateDir,
         solidityFrameworksDir,
+        options.smartContractFramework.toLowerCase(),
+        "packages",
         options.smartContractFramework.toLowerCase()
       ),
       path.join(
@@ -118,4 +130,38 @@ export async function copyTemplateFiles(
 
   // 4. Process template files, depending on enabled extensions
   await processAndCopyTemplateFiles(options, templateDir, targetDir);
+
+  if (options.smartContractFramework === "none") return;
+
+  // Also merge root package.json for scripts
+  const solidityFrameworkRootPackageJson = path.join(
+    templateDir,
+    solidityFrameworksDir,
+    options.smartContractFramework.toLowerCase(),
+    "package.json"
+  );
+
+  if (fs.existsSync(solidityFrameworkRootPackageJson)) {
+    const rootPackageJson = fs.readFileSync(
+      path.join(targetDir, "package.json"),
+      "utf8"
+    );
+    const templateRootPackageJson = fs.readFileSync(
+      path.join(solidityFrameworkRootPackageJson),
+      "utf8"
+    );
+
+    console.log("Merge JSON STR", mergeJsonStr);
+
+    const mergedPkgStr = mergeJsonStr.default(
+      rootPackageJson,
+      templateRootPackageJson
+    );
+
+    fs.writeFileSync(
+      path.join(targetDir, "package.json"),
+      mergedPkgStr,
+      "utf8"
+    );
+  }
 }
