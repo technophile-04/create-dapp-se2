@@ -17,7 +17,6 @@ import {
 } from "../utils/consts";
 import { constructYarnWorkspaces } from "../utils/construct-yarn-workspaces";
 import { constructHandleBarsTargetFilePath } from "../utils/construct-handlebars-target-file-path";
-import { CLIENT_RENEG_LIMIT } from "tls";
 
 const copy = promisify(ncp);
 
@@ -79,6 +78,7 @@ const copyFilesFromExtensions = async (
         return !fileName.includes("nextjs");
       },
     });
+
     // Copy extension files/folder into NextJS folder
     // Check if "extension/nextjs" folder exists
     const extensionNextjsDir = path.join(extensionDir, "nextjs");
@@ -131,9 +131,7 @@ export async function copyTemplateFiles(
   // 4. Process template files, depending on enabled extensions
   await processAndCopyTemplateFiles(options, templateDir, targetDir);
 
-  if (options.smartContractFramework === "none") return;
-
-  // Also merge root package.json for scripts
+  // Also merge root package.json for scripts of solidityFrameworks
   const solidityFrameworkRootPackageJson = path.join(
     templateDir,
     solidityFrameworksDir,
@@ -141,27 +139,25 @@ export async function copyTemplateFiles(
     "package.json"
   );
 
-  if (fs.existsSync(solidityFrameworkRootPackageJson)) {
-    const rootPackageJson = fs.readFileSync(
-      path.join(targetDir, "package.json"),
-      "utf8"
-    );
-    const templateRootPackageJson = fs.readFileSync(
-      path.join(solidityFrameworkRootPackageJson),
-      "utf8"
-    );
+  if (
+    options.smartContractFramework === "none" ||
+    !fs.existsSync(solidityFrameworkRootPackageJson)
+  )
+    return;
 
-    console.log("Merge JSON STR", mergeJsonStr);
+  const rootPackageJson = fs.readFileSync(
+    path.join(targetDir, "package.json"),
+    "utf8"
+  );
+  const templateRootPackageJson = fs.readFileSync(
+    path.join(solidityFrameworkRootPackageJson),
+    "utf8"
+  );
 
-    const mergedPkgStr = mergeJsonStr.default(
-      rootPackageJson,
-      templateRootPackageJson
-    );
+  const mergedPkgStr = mergeJsonStr.default(
+    rootPackageJson,
+    templateRootPackageJson
+  );
 
-    fs.writeFileSync(
-      path.join(targetDir, "package.json"),
-      mergedPkgStr,
-      "utf8"
-    );
-  }
+  fs.writeFileSync(path.join(targetDir, "package.json"), mergedPkgStr, "utf8");
 }
