@@ -19,7 +19,9 @@ import "~~/styles/globals.css";
   {{this}}
 {{/each}}
 
-{{_appOutsideComponentCode}}
+{{#each _appOutsideComponentCode}}
+  {{this}}
+{{/each}}
 
 const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
   const price = useEthPrice();
@@ -39,7 +41,9 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
   }, [isDarkMode]);
 
   return (
-  {{_appProviderWrappers}}
+    {{#each _appProviderWrappers}}
+      {{this}}
+    {{/each}}
     <WagmiConfig client={wagmiClient}>
       <NextNProgress />
       <RainbowKitProvider
@@ -57,7 +61,9 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
         <Toaster />
       </RainbowKitProvider>
     </WagmiConfig>
-    {{_appProvidersClosingTags}}
+    {{#each _appProvidersClosingTags}}
+      {{this}}
+    {{/each}}
   );
 };
 

@@ -28,10 +28,6 @@ const processAndCopyTemplateFiles = async (
   templateDir: string,
   targetDir: string
 ) => {
-  let _appOutsideComponentCode: string[] = [];
-  let _appProviderWrappers: string[] = [];
-  let _appProvidersClosingTags: string[] = [];
-
   // Copy non conflicting files
   options.extensions.forEach((extension) => {
     const extensionsBaseDir = path.join(templateDir, extensionsDir, extension);
@@ -81,7 +77,12 @@ const processAndCopyTemplateFiles = async (
     );
 
     const yarnWorkspaces = constructYarnWorkspaces(options, templateDir);
-    const _appImports = constructAppImports(options, templateDir);
+    const {
+      _appImports,
+      _appOutsideComponentCode,
+      _appProviderWrappers,
+      _appProvidersClosingTags,
+    } = constructAppImports(options, templateDir);
 
     const result = template({
       ...options,
