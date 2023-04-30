@@ -49,7 +49,10 @@ export async function promptForMissingOptions(
     type: "checkbox",
     name: "extensions",
     message: "Choose the extensions that you want to add: ",
-    choices: [{ name: "The graph", value: "graph" }],
+    choices: [
+      { name: "The graph", value: "graph" },
+      { name: "None", value: "none" },
+    ],
     default: defaultOptions.smartContractFramework,
   });
 

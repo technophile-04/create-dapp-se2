@@ -1,5 +1,5 @@
 export const smartContractFrameworks = ["hardhat", "none"] as const;
-export const availableExtensions = ["graph"] as const;
+export const availableExtensions = ["graph", "none"] as const;
 
 export type Args = string[];
 

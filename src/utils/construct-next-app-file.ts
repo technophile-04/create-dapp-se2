@@ -27,15 +27,20 @@ function createClosingTag(openingTag: string) {
 
 const require = createRequire(import.meta.url);
 
-export function constructAppImports(options: Options, templateDir: string) {
+export function constructAppFile(options: Options, templateDir: string) {
   const _appImports: string[] = [];
   const _appOutsideComponentCode: string[] = [];
   const _appProviderWrappers: string[] = [];
   const _appProvidersClosingTags: string[] = [];
 
-  // if (options.extensions.includes("none")) {
-  //   return appImports;
-  // }
+  if (options.extensions.includes("none")) {
+    return {
+      _appImports,
+      _appOutsideComponentCode,
+      _appProviderWrappers,
+      _appProvidersClosingTags,
+    };
+  }
 
   options.extensions.forEach((extension) => {
     const extensionsNextjsDir = path.join(

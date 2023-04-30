@@ -18,7 +18,7 @@ import { constructYarnWorkspaces } from "../utils/construct-yarn-workspaces";
 import { constructHandleBarsTargetFilePath } from "../utils/construct-handlebars-target-file-path";
 import { copySolidityFrameWorkDir } from "../utils/copy-solidityFramworks";
 import { mergePackageJson } from "../utils/merge-pacakge-json";
-import { constructAppImports } from "../utils/construct-app-imports";
+import { constructAppFile } from "../utils/construct-next-app-file";
 
 const copy = promisify(ncp);
 
@@ -29,32 +29,38 @@ const processAndCopyTemplateFiles = async (
   targetDir: string
 ) => {
   // Copy non conflicting files
-  options.extensions.forEach((extension) => {
-    const extensionsBaseDir = path.join(templateDir, extensionsDir, extension);
-    // copy packages dir
-    copy(
-      path.join(extensionsBaseDir, "packages"),
-      path.join(targetDir, "packages"),
-      { clobber: false }
-    );
+  if (!options.extensions.includes("none")) {
+    options.extensions.forEach((extension) => {
+      const extensionsBaseDir = path.join(
+        templateDir,
+        extensionsDir,
+        extension
+      );
+      // copy packages dir
+      copy(
+        path.join(extensionsBaseDir, "packages"),
+        path.join(targetDir, "packages"),
+        { clobber: false }
+      );
 
-    const extensionNextjsDir = path.join(extensionsBaseDir, "nextjs");
+      const extensionNextjsDir = path.join(extensionsBaseDir, "nextjs");
 
-    const readAllRootFiles = fs.readdirSync(extensionNextjsDir);
-    readAllRootFiles.forEach((name) => {
-      const stats = fs.statSync(path.join(extensionNextjsDir, name));
-      if (stats.isDirectory()) {
-        const targetNextjsDir = path.join(targetDir, "packages", "nextjs");
-        copy(
-          path.join(extensionNextjsDir, name),
-          path.join(targetNextjsDir, name),
-          {
-            clobber: false,
-          }
-        );
-      }
+      const readAllRootFiles = fs.readdirSync(extensionNextjsDir);
+      readAllRootFiles.forEach((name) => {
+        const stats = fs.statSync(path.join(extensionNextjsDir, name));
+        if (stats.isDirectory()) {
+          const targetNextjsDir = path.join(targetDir, "packages", "nextjs");
+          copy(
+            path.join(extensionNextjsDir, name),
+            path.join(targetNextjsDir, name),
+            {
+              clobber: false,
+            }
+          );
+        }
+      });
     });
-  });
+  }
 
   handleBarsTemplateFiles.forEach((templateFile) => {
     // eg : templateFile = base/package.json.hbs
@@ -82,7 +88,7 @@ const processAndCopyTemplateFiles = async (
       _appOutsideComponentCode,
       _appProviderWrappers,
       _appProvidersClosingTags,
-    } = constructAppImports(options, templateDir);
+    } = constructAppFile(options, templateDir);
 
     const result = template({
       ...options,
@@ -102,6 +108,8 @@ const mergeExtensionsPackageJson = async (
   templateDir: string,
   targetDir: string
 ) => {
+  if (options.extensions.includes("none")) return;
+
   options.extensions.forEach((extension) => {
     // eg : extension = graph
     // extensionBaseDir = templateDir/extensions/graph

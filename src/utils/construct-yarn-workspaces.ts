@@ -14,6 +14,8 @@ export function constructYarnWorkspaces(
     yarnWorkspaces.push(`packages/${options.smartContractFramework}`);
   }
 
+  if (options.extensions.includes("none")) return yarnWorkspaces;
+
   options.extensions.forEach((extension) => {
     const extensionsBaseDir = path.join(templateDir, extensionsDir, extension);
     if (fs.existsSync(path.join(extensionsBaseDir, "packages"))) {
