@@ -28,8 +28,8 @@ export async function createProject(options: Options) {
       title: `🚀 Creating a new Scaffold-ETH 2 app in ${chalk.green.bold(
         options.project
       )}`,
-      task: () =>
-        copyTemplateFiles(options, templateDirectory, targetDirectory),
+      task: async () =>
+        await copyTemplateFiles(options, templateDirectory, targetDirectory),
     },
     {
       title: `📦 Installing dependencies with yarn, this could take a while`,
@@ -43,6 +43,23 @@ export async function createProject(options: Options) {
   ]);
 
   try {
+    // console.log(`📁 Creating project directory ${targetDirectory}...`);
+
+    // await createProjectDirectory(options.project, process.cwd());
+    // console.log(`📁 created project directory ${targetDirectory}`);
+    // console.log(
+    //   `🚀 Creating a new Scaffold-ETH 2 app in ${chalk.green.bold(
+    //     options.project
+    //   )}`
+    // );
+    // await copyTemplateFiles(options, templateDirectory, targetDirectory);
+    // console.log(
+    //   `🚀 New Scaffold-ETH 2 app in ${chalk.green.bold(options.project)}`
+    // );
+    // console.log(
+    //   `Installing dependencies with yarn, this could take a while...`
+    // );
+    // await installPackages(targetDirectory);
     await tasks.run();
     renderOutroMessage(options);
   } catch (error) {

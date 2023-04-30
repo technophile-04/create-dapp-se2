@@ -1,22 +1,23 @@
-// @ts-expect-error We don't have types for this probably add .d.ts file
-import mergeJsonStr from "merge-packages";
 import {
   availableExtensions,
   HandleBarTemplateOptions,
   Options,
 } from "../types";
-import fs from "fs";
+import fs, { stat } from "fs";
 import Handlebars from "handlebars";
 import ncp from "ncp";
 import path from "path";
 import { promisify } from "util";
 import {
   baseDir,
+  extensionsDir,
   handleBarsTemplateFiles,
   solidityFrameworksDir,
 } from "../utils/consts";
 import { constructYarnWorkspaces } from "../utils/construct-yarn-workspaces";
 import { constructHandleBarsTargetFilePath } from "../utils/construct-handlebars-target-file-path";
+import { copySolidityFrameWorkDir } from "../utils/copy-solidityFramworks";
+import { mergePackageJson } from "../utils/merge-pacakge-json";
 
 const copy = promisify(ncp);
 
@@ -26,6 +27,39 @@ const processAndCopyTemplateFiles = async (
   templateDir: string,
   targetDir: string
 ) => {
+  let _appImports: string[] = [];
+  let _appOutsideComponentCode: string[] = [];
+  let _appProviderWrappers: string[] = [];
+  let _appProvidersClosingTags: string[] = [];
+
+  // Copy non conflicting files
+  options.extensions.forEach((extension) => {
+    const extensionsBaseDir = path.join(templateDir, extensionsDir, extension);
+    // copy packages dir
+    copy(
+      path.join(extensionsBaseDir, "packages"),
+      path.join(targetDir, "packages"),
+      { clobber: false }
+    );
+
+    const extensionNextjsDir = path.join(extensionsBaseDir, "nextjs");
+
+    const readAllRootFiles = fs.readdirSync(extensionNextjsDir);
+    readAllRootFiles.forEach((name) => {
+      const stats = fs.statSync(path.join(extensionNextjsDir, name));
+      if (stats.isDirectory()) {
+        const targetNextjsDir = path.join(targetDir, "packages", "nextjs");
+        copy(
+          path.join(extensionNextjsDir, name),
+          path.join(targetNextjsDir, name),
+          {
+            clobber: false,
+          }
+        );
+      }
+    });
+  });
+
   handleBarsTemplateFiles.forEach((templateFile) => {
     // eg : templateFile = base/package.json.hbs
 
@@ -51,46 +85,60 @@ const processAndCopyTemplateFiles = async (
     const result = template({
       ...options,
       yarnWorkspaces,
-      _appImports: [],
-      _appOutsideComponentCode: [],
-      _appProviderWrappers: [],
-      _appProvidersClosingTags: [],
+      _appImports,
+      _appOutsideComponentCode,
+      _appProviderWrappers,
+      _appProvidersClosingTags,
     });
 
     fs.writeFileSync(targetFilePath, result, "utf8");
   });
 };
 
-const copyFilesFromExtensions = async (
+const mergeExtensionsPackageJson = async (
   options: Options,
   templateDir: string,
   targetDir: string
 ) => {
-  console.log("Copying files from extensions");
   options.extensions.forEach((extension) => {
-    // Copy "package" folder from extension
-    const extensionDir = path.join(templateDir, extension);
-    const targetExtensionDir = path.join(targetDir, extension);
-    copy(extensionDir, targetExtensionDir, {
-      clobber: false,
-      filter: (fileName) => {
-        // ignore nextjs
-        return !fileName.includes("nextjs");
-      },
-    });
+    // eg : extension = graph
+    // extensionBaseDir = templateDir/extensions/graph
+    const extensionsBaseDir = path.join(templateDir, extensionsDir, extension);
 
-    // Copy extension files/folder into NextJS folder
-    // Check if "extension/nextjs" folder exists
-    const extensionNextjsDir = path.join(extensionDir, "nextjs");
-    if (fs.existsSync(extensionNextjsDir)) {
-      // copy that folder into targetDir/nextjs
-      const targetExtensionNextjsDir = path.join(targetDir, "nextjs");
-      copy(extensionNextjsDir, targetExtensionNextjsDir, {
-        clobber: false,
-      });
-    }
+    // merge package.json from extensions nextjs to targetDir nextjs pacakge.json
+    mergePackageJson(
+      path.join(targetDir, "packages", "nextjs", "package.json"),
+      path.join(extensionsBaseDir, "nextjs", "package.json")
+    );
+
+    // merge root pacakge json for scripts of extensions
+    mergePackageJson(
+      path.join(targetDir, "package.json"),
+      path.join(extensionsBaseDir, "package.json")
+    );
   });
 };
+
+export async function mergeSolidityFrameWorksPackageJson(
+  options: Options,
+  templateDir: string,
+  targetDir: string
+) {
+  if (options.smartContractFramework === "none") return;
+
+  // Also merge root package.json for scripts of solidityFrameworks
+  const solidityFrameworkRootPackageJson = path.join(
+    templateDir,
+    solidityFrameworksDir,
+    options.smartContractFramework.toLowerCase(),
+    "package.json"
+  );
+
+  mergePackageJson(
+    path.join(targetDir, "package.json"),
+    solidityFrameworkRootPackageJson
+  );
+}
 
 export async function copyTemplateFiles(
   options: Options,
@@ -106,58 +154,13 @@ export async function copyTemplateFiles(
     },
   });
 
-  // 2. Copy smart contract framework folder if selected.
-  if (options.smartContractFramework !== "none") {
-    await copy(
-      path.join(
-        templateDir,
-        solidityFrameworksDir,
-        options.smartContractFramework.toLowerCase(),
-        "packages",
-        options.smartContractFramework.toLowerCase()
-      ),
-      path.join(
-        targetDir,
-        "packages",
-        options.smartContractFramework.toLowerCase()
-      ),
-      { clobber: false }
-    );
-  }
-
-  // 3. Copy extensions folder/files
-  // await copyFilesFromExtensions(options, templateDir, targetDir);
+  // 2. Copy smart contract framework folder if selected.(This function only copies non conflicting files like `packages` dir)
+  await copySolidityFrameWorkDir(options, templateDir, targetDir);
 
   // 4. Process template files, depending on enabled extensions
   await processAndCopyTemplateFiles(options, templateDir, targetDir);
 
-  // Also merge root package.json for scripts of solidityFrameworks
-  const solidityFrameworkRootPackageJson = path.join(
-    templateDir,
-    solidityFrameworksDir,
-    options.smartContractFramework.toLowerCase(),
-    "package.json"
-  );
+  mergeSolidityFrameWorksPackageJson(options, templateDir, targetDir);
 
-  if (
-    options.smartContractFramework === "none" ||
-    !fs.existsSync(solidityFrameworkRootPackageJson)
-  )
-    return;
-
-  const rootPackageJson = fs.readFileSync(
-    path.join(targetDir, "package.json"),
-    "utf8"
-  );
-  const templateRootPackageJson = fs.readFileSync(
-    path.join(solidityFrameworkRootPackageJson),
-    "utf8"
-  );
-
-  const mergedPkgStr = mergeJsonStr.default(
-    rootPackageJson,
-    templateRootPackageJson
-  );
-
-  fs.writeFileSync(path.join(targetDir, "package.json"), mergedPkgStr, "utf8");
+  mergeExtensionsPackageJson(options, templateDir, targetDir);
 }
