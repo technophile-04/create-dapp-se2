@@ -18,6 +18,12 @@ export type Options = RawOptions & {
   smartContractFramework: Template;
 };
 
+export type templateAppConfig = {
+  _appImports: string[];
+  _appOutsideComponentCode: string;
+  _appProviderWrappers: string[];
+};
+
 export type HandleBarTemplateOptions = Options & {
   yarnWorkspaces: `packages/${string}`[];
   _appImports: string[];

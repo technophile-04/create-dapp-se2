@@ -1,9 +1,0 @@
-{
-  "_appImports": [
-    "import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'"
-  ],
-  "_appOutsideComponentCode": "\n  const subgraphUri = \"http://localhost:8000/subgraphs/name/scaffold-eth/your-contract\";\n  const apolloClient = new ApolloClient({\n    uri: subgraphUri,\n    cache: new InMemoryCache(),\n  });\n  ",
-  "_appProviderWrappers": [
-    "<ApolloProvider client={apolloClient}>"
-  ]
-}

@@ -18,6 +18,7 @@ import { constructYarnWorkspaces } from "../utils/construct-yarn-workspaces";
 import { constructHandleBarsTargetFilePath } from "../utils/construct-handlebars-target-file-path";
 import { copySolidityFrameWorkDir } from "../utils/copy-solidityFramworks";
 import { mergePackageJson } from "../utils/merge-pacakge-json";
+import { constructAppImports } from "../utils/construct-app-imports";
 
 const copy = promisify(ncp);
 
@@ -27,7 +28,6 @@ const processAndCopyTemplateFiles = async (
   templateDir: string,
   targetDir: string
 ) => {
-  let _appImports: string[] = [];
   let _appOutsideComponentCode: string[] = [];
   let _appProviderWrappers: string[] = [];
   let _appProvidersClosingTags: string[] = [];
@@ -81,6 +81,7 @@ const processAndCopyTemplateFiles = async (
     );
 
     const yarnWorkspaces = constructYarnWorkspaces(options, templateDir);
+    const _appImports = constructAppImports(options, templateDir);
 
     const result = template({
       ...options,

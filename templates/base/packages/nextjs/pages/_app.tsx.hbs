@@ -15,7 +15,9 @@ import { wagmiClient } from "~~/services/web3/wagmiClient";
 import { appChains } from "~~/services/web3/wagmiConnectors";
 import "~~/styles/globals.css";
 
-{{_appImports}}
+{{#each _appImports}}
+  {{this}}
+{{/each}}
 
 {{_appOutsideComponentCode}}
 
