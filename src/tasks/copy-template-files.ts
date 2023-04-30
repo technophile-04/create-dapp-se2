@@ -80,7 +80,7 @@ const processAndCopyTemplateFiles = async (
       }
     );
 
-    const yarnWorkspaces = constructYarnWorkspaces(options);
+    const yarnWorkspaces = constructYarnWorkspaces(options, templateDir);
 
     const result = template({
       ...options,
