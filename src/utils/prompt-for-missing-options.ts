@@ -36,15 +36,6 @@ export async function promptForMissingOptions(
     });
   }
 
-  if (!options.install) {
-    questions.push({
-      type: "confirm",
-      name: "install",
-      message: "Install packages?",
-      default: defaultOptions.install,
-    });
-  }
-
   questions.push({
     type: "checkbox",
     name: "extensions",
@@ -55,6 +46,15 @@ export async function promptForMissingOptions(
     ],
     default: defaultOptions.smartContractFramework,
   });
+
+  if (!options.install) {
+    questions.push({
+      type: "confirm",
+      name: "install",
+      message: "Install packages?",
+      default: defaultOptions.install,
+    });
+  }
 
   const answers = await inquirer.prompt(questions);
 
