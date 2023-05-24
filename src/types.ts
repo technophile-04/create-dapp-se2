@@ -8,9 +8,9 @@ export type Template = (typeof smartContractFrameworks)[number];
 export type Extensions = (typeof availableExtensions)[number];
 
 export type RawOptions = {
-  smartContractFramework?: Template;
-  project: string;
-  install: boolean;
+  smartContractFramework: Template | null;
+  project: string | null;
+  install: boolean | null;
 };
 
 export type Options = RawOptions & {

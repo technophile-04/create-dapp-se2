@@ -9,20 +9,29 @@ export function parseArgumentsIntoOptions(rawArgs: Args): RawOptions {
     {
       "--install": Boolean,
       "-i": "--install",
+
+      "--skip-install": Boolean,
+      "--skip": "--skip-install",
+      "-s": "--skip-install",
+
       "--smartContractFramework": String,
-      "-scf": "--smartContractFramework",
+      "-f": "--smartContractFramework",
     },
     {
       argv: rawArgs.slice(2).map((a) => a.toLowerCase()),
     }
   );
 
-  const smartContractFramework = args["--smartContractFramework"] ?? "none";
+  const install = args["--install"] ?? null;
+
+  const skipInstall = args["--skip-install"] ?? null;
+
+  const smartContractFramework = args["--smartContractFramework"] ?? null;
   const isTemplateValid = checkValidSmartContractFramework(
     smartContractFramework
   );
 
-  if (!isTemplateValid) {
+  if (smartContractFramework && !isTemplateValid) {
     console.log(
       `%s You passed incorrect template: ${
         args["--smartContractFramework"]
@@ -33,13 +42,12 @@ export function parseArgumentsIntoOptions(rawArgs: Args): RawOptions {
     );
   }
 
-  const project = args._[0];
+  const project = args._[0] ?? null;
 
   return {
     project,
-    install: args["--install"] || false,
-    smartContractFramework: isTemplateValid
-      ? smartContractFramework
-      : undefined,
+    install: install ?? !skipInstall ?? null,
+    smartContractFramework:
+      smartContractFramework && isTemplateValid ? smartContractFramework : null,
   };
 }

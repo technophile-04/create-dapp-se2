@@ -13,7 +13,7 @@ export async function promptForMissingOptions(
 ): Promise<Options> {
   const questions = [];
 
-  if (!options.project) {
+  if (options.project === null) {
     questions.push({
       type: "input",
       name: "project",
@@ -23,7 +23,7 @@ export async function promptForMissingOptions(
     });
   }
 
-  if (!options.smartContractFramework) {
+  if (options.smartContractFramework === null) {
     questions.push({
       type: "list",
       name: "smartContractFramework",
@@ -47,7 +47,7 @@ export async function promptForMissingOptions(
     default: defaultOptions.smartContractFramework,
   });
 
-  if (!options.install) {
+  if (options.install === null) {
     questions.push({
       type: "confirm",
       name: "install",
