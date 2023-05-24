@@ -4,9 +4,7 @@ import { checkValidSmartContractFramework } from "./check-valid-smart-contract-f
 import arg from "arg";
 import chalk from "chalk";
 
-export function parseArgumentsIntoOptions(
-  rawArgs: Args
-): Omit<RawOptions, "extensions"> {
+export function parseArgumentsIntoOptions(rawArgs: Args): RawOptions {
   const args = arg(
     {
       "--install": Boolean,
@@ -15,12 +13,11 @@ export function parseArgumentsIntoOptions(
       "-scf": "--smartContractFramework",
     },
     {
-      argv: rawArgs.slice(2),
+      argv: rawArgs.slice(2).map((a) => a.toLowerCase()),
     }
   );
 
-  const smartContractFramework =
-    args["--smartContractFramework"]?.toLowerCase();
+  const smartContractFramework = args["--smartContractFramework"] ?? "none";
   const isTemplateValid = checkValidSmartContractFramework(
     smartContractFramework
   );
@@ -36,7 +33,7 @@ export function parseArgumentsIntoOptions(
     );
   }
 
-  const project = args._[0]?.toLowerCase();
+  const project = args._[0];
 
   return {
     project,
