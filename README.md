@@ -39,13 +39,25 @@ git clone https://github.com/carletex/create-dapp-example
 cd create-dapp-example
 ```
 
-**Option 1.** Build & npx
+**Option 1.** Dev & cli
+
+Get Rollup watching for changes:
+```bash
+yarn dev
+```
+
+Edit file as you want. When you want to run the cli tool, just do:
+```bash
+yarn cli
+```
+
+**Option 2.** Build & npx
 
 ```bash
 yarn build && npx .
 ```
 
-**Option 2.** Linking package locally and running watch mode:
+**Option 3.** Linking package locally and running watch mode:
 
 ```bash
 # Make sure you are in create-dapp-se2 directory

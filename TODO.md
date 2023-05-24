@@ -1,0 +1,1 @@
+[ ] handle using a prject name when a folder with that name already exists.
