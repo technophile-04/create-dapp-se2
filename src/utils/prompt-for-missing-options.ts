@@ -60,9 +60,9 @@ export async function promptForMissingOptions(
 
   return {
     smartContractFramework:
-      options.smartContractFramework || answers.smartContractFramework,
-    project: options.project || answers.project,
+      options.smartContractFramework ?? answers.smartContractFramework,
+    project: options.project ?? answers.project,
     extensions: answers.extensions,
-    install: options.install || answers.install,
+    install: options.install ?? answers.install,
   };
 }
